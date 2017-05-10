@@ -5,7 +5,7 @@ instrreset()
 tic
 
 
-lim_inf = [75       0       20    -2];   %  Limites originais
+lim_inf = [75       0       20    -2 ];   %  Limites originais
 lim_sup = [30000    100     20   +2];
 
 Lb_Data1 =[0      0     20    -2 ];    % frec, bias, oe, level current 
@@ -25,9 +25,9 @@ dH = 0.01;                     % Para Diferenciação Numerica e caracterização
 % ALGORITMO GENETICO
 
 % Parâmetros GA                 %Parâmetros modificáveis do ga
-PopulationSize_Data = 50;
+PopulationSize_Data = 5;
 EliteCount_Data = 3;
-Generations_Data = 100;
+Generations_Data = 10;
 StallGenLimit_Data = 10;
 TolFun_Data = 1e-4;
 StallTimeLimit_Data = 1e100000;
@@ -77,7 +77,8 @@ x(1) = 10^((x(1))*(log10(30000/75))+log10(75));
 xfin = x;
 lvwrite([0 xfin dH fval 1 ]);                    % Stop LabView and write the best ind no LabView
 pause(1);
-lvwrite1([Config_GA]);                           % Write configuração do GA
+lvwrite1([Config_GA]);
+% Write configuração do GA
 
 
 fprintf('\n *** Algoritmo Genético ***\n\n');
