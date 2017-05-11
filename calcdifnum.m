@@ -20,15 +20,14 @@ function sfas = calcdifnum(x,DH,N,SensWeight,TolS)
     for fita = 1:2
         for hField = 1:N
             vecin_actual = vecin(hField + (fita-1)*N,:);
-            lvwrite(vecin_actual);
+            lvwrite([vecin_actual (fita-1)]);
             ffatras = lvreadser;
                 while(isempty(ffatras) || ffatras(2)==0)
-                    lvwrite(vecin_actual);
+                    lvwrite([vecin_actual (fita-1)]);
                     ffatras = lvreadser; 
                 end
             Phi = [Phi ffatras(1)];
         end
-        % Troca fita labview
     end
 
     Phi_fita1 = Phi(1:N);

@@ -5,22 +5,23 @@ instrreset()
 tic
 
 
-lim_inf = [75       0       20    -2 ];   %  Limites originais
-lim_sup = [30000    100     20   +2];
+lim_inf = [75       0       20    -2 75       0       20    -2];   %  Limites originais
+lim_sup = [30000    100     20    +2 30000    100     20    +2];
 
-Lb_Data1 =[0      0     20    -2 ];    % frec, bias, oe, level current 
-Ub_Data1 =[1     100    20    +2 ];    
+Lb_Data1 =[0      0     20    -2  0      0     20    -2];    % frec, bias, oe, level current 
+Ub_Data1 =[1     100    20    +2  1     100    20    +2];    
 
 % esc = [299250 10000 1 2/2.89e-3];            %Factor de Modificação dos limites
-esc = [1 1 1 1];
+esc = [1 1 1 1 1 1 1 1];
 
 Lb_Data = Lb_Data1.*esc;        % Limites Modificados
 Ub_Data = Ub_Data1.*esc;
 
-
-
-numInputVariables_Data = 4;     % Numero de variais do sistema
-dH = 0.01;                     % Para Diferenciação Numerica e caracterização
+numInputVariables_Data = 8;     % Numero de variais do sistema
+DH = 0.7;
+N = 7;
+SensWeight = 0.8;
+TolS = 500;
 
 % ALGORITMO GENETICO
 
@@ -58,11 +59,10 @@ options = gaoptimset(options,'TolFun',TolFun_Data);
 %options = gaoptimset(options,'OutputFcns' ,@showpopulation); %@showpopulation- Show Population --- @savepopulation -Salva population e scores - add line total_medicoes2 = sortrows(horzcat(total_population,total_scores),5); % Resultado total dos testes
  
  % Função de avaliação
-fitnessFunction=@(x)(-abs(calcdifnum(x,dH)));           %Função de Evaluação forma anonima
+fitnessFunction=@(x)(- calcdifnum(x,DH,N,SensWeight,TolS) );           %Função de Evaluação forma anonima
 
 [x,fval,exitflag,output,state,scores] = ...
     ga1(fitnessFunction,numInputVariables_Data,[],[],[],[],Lb_Data,Ub_Data,[],[],options); % Evaluçao do GA
-
 
 Generations_1 = output.generations;                     %Geraçoes para Convergir
 
@@ -73,89 +73,25 @@ Config_GA = [0 Crossover_type PopulationSize_Data Generations_Data...
             Generations_1 Generations_2 Generations_3 EliteCount_Data  StallGenLimit_Data...  %Parametros do GA
             TolFun_Data   CrossoverFraction_Data  Mutation_rate tempo lim_inf lim_sup];  
         
-x(1) = 10^((x(1))*(log10(30000/75))+log10(75));                               
+x(1) = 10^((x(1))*(log10(30000/75))+log10(75)); 
+x(5) = 10^((x(5))*(log10(30000/75))+log10(75)); 
+
 xfin = x;
-lvwrite([0 xfin dH fval 1 ]);                    % Stop LabView and write the best ind no LabView
+lvwrite([0 xfin DH fval 1 ]);                    % Stop LabView and write the best ind no LabView
 pause(1);
-lvwrite1([Config_GA]);
+lvwrite1(Config_GA);
 % Write configuração do GA
 
-
 fprintf('\n *** Algoritmo Genético ***\n\n');
 fprintf('Número de Gerações: %d\n', output.generations);
 fprintf('População: %d\n', PopulationSize_Data);
 fprintf('Número de Avaliações: %d\n', output.funccount);
 fprintf('Sensibilidade Ótima: %g\n',fval);
-fprintf('Frequência da corrente de condicionamento (KHz): %10.0f\n',x(1));
-fprintf('Nível CC da corrente de condicionamento (mA): %6.4f\n',x(2));
-fprintf('Amplitude da Corrente (mA): %6.4f\n',x(3));
-fprintf('Campo magnético externo (Oe): %8.4f\n',x(4));
-
-
-%% 2DO ALGORITMO
-tic
-[x,fval,exitflag,output,state,scores] = ...
-    ga1(fitnessFunction,numInputVariables_Data,[],[],[],[],Lb_Data,Ub_Data,[],[],options); % Evaluçao do GA
-
-
-Generations_1 = output.generations;                     %Geraçoes para Convergir
-
-toc
-tempo = (toc/3600);
-
-Config_GA = [0 Crossover_type PopulationSize_Data Generations_Data...
-            Generations_1 Generations_2 Generations_3 EliteCount_Data  StallGenLimit_Data...  %Parametros do GA
-            TolFun_Data   CrossoverFraction_Data  Mutation_rate tempo lim_inf lim_sup];
-        
-x(1) = 10^((x(1))*(log10(30000/75))+log10(75)); 
-                               
-xfin = x;
-lvwrite([0 xfin dH fval 1 ]);                    % Stop LabView and write the best ind no LabView
-pause(1);
-lvwrite1([Config_GA]);                           % Write configuração do GA
-
-
-
-fprintf('\n *** Algoritmo Genético ***\n\n');
-fprintf('Número de Gerações: %d\n', output.generations);
-fprintf('População: %d\n', PopulationSize_Data);
-fprintf('Número de Avaliações: %d\n', output.funccount);
-fprintf('Sensibilidade Ótima: %g\n',fval);
-fprintf('Frequência da corrente de condicionamento (KHz): %10.0f\n',x(1));
-fprintf('Nível CC da corrente de condicionamento (mA): %6.4f\n',x(2));
-fprintf('Amplitude da Corrente (mA): %6.4f\n',x(3));
-fprintf('Campo magnético externo (Oe): %8.4f\n',x(4));
-%% 3r Algoritmo
-tic
-
-[x,fval,exitflag,output,state,scores] = ...
-    ga1(fitnessFunction,numInputVariables_Data,[],[],[],[],Lb_Data,Ub_Data,[],[],options); % Evaluçao do GA
-
-
-Generations_1 = output.generations;                     %Geraçoes para Convergir
-
-toc
-tempo = (toc/3600);
-
-Config_GA = [0 Crossover_type PopulationSize_Data Generations_Data...
-            Generations_1 Generations_2 Generations_3 EliteCount_Data  StallGenLimit_Data...  %Parametros do GA
-            TolFun_Data   CrossoverFraction_Data  Mutation_rate tempo lim_inf lim_sup];  
-        
-x(1) = 10^((x(1))*(log10(30000/75))+log10(75)); 
-                               
-xfin = x;
-lvwrite([0 xfin dH fval 1 ]);                    % Stop LabView and write the best ind no LabView
-pause(1);
-lvwrite1([Config_GA 1]);                           % Write configuração do GA
-
-
-fprintf('\n *** Algoritmo Genético ***\n\n');
-fprintf('Número de Gerações: %d\n', output.generations);
-fprintf('População: %d\n', PopulationSize_Data);
-fprintf('Número de Avaliações: %d\n', output.funccount);
-fprintf('Sensibilidade Ótima: %g\n',fval);
-fprintf('Frequência da corrente de condicionamento (KHz): %10.0f\n',x(1));
-fprintf('Nível CC da corrente de condicionamento (mA): %6.4f\n',x(2));
-fprintf('Amplitude da Corrente (mA): %6.4f\n',x(3));
-fprintf('Campo magnético externo (Oe): %8.4f\n',x(4));
-
+fprintf('FITA 1 - Frequência da corrente de condicionamento (KHz): %10.0f\n',x(1));
+fprintf('FITA 1 - Nível CC da corrente de condicionamento (mA): %6.4f\n',x(2));
+fprintf('FITA 1 - Amplitude da Corrente (mA): %6.4f\n',x(3));
+fprintf('FITA 1 - Campo magnético externo (Oe): %8.4f\n',x(4));
+fprintf('FITA 2 - Frequência da corrente de condicionamento (KHz): %10.0f\n',x(5));
+fprintf('FITA 2 - Nível CC da corrente de condicionamento (mA): %6.4f\n',x(6));
+fprintf('FITA 2 - Amplitude da Corrente (mA): %6.4f\n',x(7));
+fprintf('FITA 2 - Campo magnético externo (Oe): %8.4f\n',x(8));
