@@ -77,7 +77,7 @@ x(1) = 10^((x(1))*(log10(30000/75))+log10(75));
 x(5) = 10^((x(5))*(log10(30000/75))+log10(75)); 
 
 xfin = x;
-lvwrite([0 xfin DH fval 1 ]);                    % Stop LabView and write the best ind no LabView
+lvwrite([0 xfin DH 1 ]);                    % Stop LabView and write the best ind no LabView
 pause(1);
 lvwrite1(Config_GA);
 % Write configuração do GA
