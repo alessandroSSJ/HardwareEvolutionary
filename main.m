@@ -5,11 +5,11 @@ instrreset()
 tic
 
 
-lim_inf = [75       0       20    -2 75       0       20    -2];   %  Limites originais
-lim_sup = [30000    100     20    +2 30000    100     20    +2];
+lim_inf = [75       0       1    -2 75       0       1    -2];   %  Limites originais
+lim_sup = [30000    100     30    +2 30000    100     30    +2];
 
-Lb_Data1 =[0      0     20    -2  0      0     20    -2];    % frec, bias, oe, level current 
-Ub_Data1 =[1     100    20    +2  1     100    20    +2];    
+Lb_Data1 =[0      0     1    -2  0      0     1    -2];    % frec, bias, oe, level current 
+Ub_Data1 =[1     100    30    +2  1     100    30    +2];    
 
 % esc = [299250 10000 1 2/2.89e-3];            %Factor de Modificação dos limites
 esc = [1 1 1 1 1 1 1 1];
@@ -19,17 +19,17 @@ Ub_Data = Ub_Data1.*esc;
 
 numInputVariables_Data = 8;     % Numero de variais do sistema
 DH = 0.7;
-N = 7;
-SensWeight = 0.8;
-TolS = 500;
+N = 15;
+SensWeight = 0.9;
+TolS = 5;   % chute a vera
 
 % ALGORITMO GENETICO
 
 % Parâmetros GA                 %Parâmetros modificáveis do ga
-PopulationSize_Data = 5;
-EliteCount_Data = 3;
-Generations_Data = 10;
-StallGenLimit_Data = 10;
+PopulationSize_Data = 8; % tava 5
+EliteCount_Data = 4;    % tava 3
+Generations_Data = 100;   % tava 10
+StallGenLimit_Data = 10; %tava 10
 TolFun_Data = 1e-4;
 StallTimeLimit_Data = 1e100000;
 CrossoverFraction_Data = 0.8;
@@ -41,7 +41,7 @@ Generations_2 = 0;
 Generations_3 = 0;
 % GA
 % Start with the default options
- options = gaoptimset;
+options = gaoptimset;
 options = gaoptimset('CreationFcn', @gacreationuniform);%@gacreationuniform,@gacreationlinearfeasible,
 options = gaoptimset('PopInitRange', [0 20 1 -1.6 ; 0.5 50 10 -1.2]);
 options = gaoptimset(options,'CrossoverFcn', {@crossoverheuristic , 2});%@crossoverheuristic | {@crossoverscattered} | {@crossoverintermediate}* | @crossoversinglepoint | @crossovertwopoint | @crossoverarithmetic
@@ -79,14 +79,14 @@ x(5) = 10^((x(5))*(log10(30000/75))+log10(75));
 xfin = x;
 lvwrite([0 xfin DH 1 ]);                    % Stop LabView and write the best ind no LabView
 pause(1);
-lvwrite1(Config_GA);
+lvwrite1(Config_GA);    
 % Write configuração do GA
 
 fprintf('\n *** Algoritmo Genético ***\n\n');
 fprintf('Número de Gerações: %d\n', output.generations);
 fprintf('População: %d\n', PopulationSize_Data);
 fprintf('Número de Avaliações: %d\n', output.funccount);
-fprintf('Sensibilidade Ótima: %g\n',fval);
+fprintf('Valor Ótimo: %g\n',fval);
 fprintf('FITA 1 - Frequência da corrente de condicionamento (KHz): %10.0f\n',x(1));
 fprintf('FITA 1 - Nível CC da corrente de condicionamento (mA): %6.4f\n',x(2));
 fprintf('FITA 1 - Amplitude da Corrente (mA): %6.4f\n',x(3));

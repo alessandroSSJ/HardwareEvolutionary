@@ -1,7 +1,7 @@
 function sfas = calcdifnum(x,DH,N,SensWeight,TolS)
 
-    hPoints(1) = (x(4)-DH)/2:DH/(N-1):(x(4)+DH)/2;
-    hPoints(2) = (x(8)-DH)/2:DH/(N-1):(x(8)+DH)/2; 
+    hPoints(1,:) = (x(4)-DH)/2:DH/(N-1):(x(4)+DH)/2;
+    hPoints(2,:) = (x(8)-DH)/2:DH/(N-1):(x(8)+DH)/2; 
 
     x(1) = 10^((x(1))*(log10(30000/75))+log10(75));
     x(5) = 10^((x(5))*(log10(30000/75))+log10(75));
@@ -31,11 +31,11 @@ function sfas = calcdifnum(x,DH,N,SensWeight,TolS)
     end
 
     Phi_fita1 = Phi(1:N);
-    H_fita1 = hPoints(1);
+    H_fita1 = hPoints(1,:);
 
     Phi_fita2 = Phi((N+1):2*N);
-    H_fita2 = hPoints(2);
-
+    H_fita2 = hPoints(2,:);
+    
     Fit_fita1 = polyfit(H_fita1,Phi_fita1,1);
     Fit_fita2 = polyfit(H_fita2,Phi_fita2,1);
 
@@ -44,7 +44,7 @@ function sfas = calcdifnum(x,DH,N,SensWeight,TolS)
 
     intercept1 = Fit_fita1(2);
     intercept2 = Fit_fita2(2);
-
+    
     residFita1 = Phi_fita1 - (S1*H_fita1 + intercept1);
     residFita2 = Phi_fita2 - (S2*H_fita2 + intercept2);
 
