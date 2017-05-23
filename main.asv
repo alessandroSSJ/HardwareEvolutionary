@@ -4,7 +4,6 @@ warning off
 instrreset()
 tic
 
-% Frequencia - DC AC Campo ...
 
 lim_inf = [75       0       1    -2 75       0       1    -2];   %  Limites originais
 lim_sup = [30000    100     30    +2 30000    100     30    +2];
@@ -44,7 +43,7 @@ Generations_3 = 0;
 % Start with the default options
 options = gaoptimset;
 options = gaoptimset('CreationFcn', @gacreationuniform);%@gacreationuniform,@gacreationlinearfeasible,
-options = gaoptimset('PopInitRange', [0 20 1 -1.6  0 20 1 -1.6; 0.5 50 10 -1.2 0.5 50 10 -1.2]);
+% options = gaoptimset('PopInitRange', [0 20 1 -1.6  0 20 1 -1.6; 0.5 50 10 -1.2 0.5 50 10 -1.2]);
 options = gaoptimset(options,'CrossoverFcn', {@crossoverheuristic , 2});%@crossoverheuristic | {@crossoverscattered} | {@crossoverintermediate}* | @crossoversinglepoint | @crossovertwopoint | @crossoverarithmetic
 options = gaoptimset(options,'SelectionFcn', @selectiontournament);%@selectionremainder | @selectionuniform | {@selectionstochunif} | @selectionroulette | @selectiontournament
 options = gaoptimset(options,'CrossoverFraction', CrossoverFraction_Data);
